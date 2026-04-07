@@ -8,24 +8,39 @@
 
 | 호출 | 모드 |
 |---|---|
-| `wrsm` / 세션 시작 | LOAD 모드 |
+| `wrsm` / 세션 시작 / 이어서 | LOAD 모드 |
 | `wrsm log` / 세션 종료 | SAVE 모드 |
 
 ---
 
 ## LOAD 모드
 
-### 1. tasks/todo.md 읽기
+### 1. 스킬 로드
+
+스킬 파일 경로 판별:
+```
+skills/ 존재             → skills/ 사용
+.claude/lhw/skills/ 존재 → .claude/lhw/skills/ 사용
+```
+
+아래 파일을 순서대로 Read:
+1. `wharness.md`
+2. `wharness-run.md`
+3. `wharness-check.md`
+
+### 2. tasks/todo.md 읽기
 
 ```
 tasks/todo.md 존재 → Read 후 미완료 항목 출력
 tasks/todo.md 없음 → "등록된 Task 없음" 출력
 ```
 
-### 2. 출력 형식
+### 3. 출력 형식
 
 ```
 📋 {프로젝트명} — 세션 재개
+
+스킬 로드: wharness ✅ / wharness-run ✅ / wharness-check ✅
 
 진행 중:
   - [ ] {항목}
@@ -35,7 +50,7 @@ tasks/todo.md 없음 → "등록된 Task 없음" 출력
       {설명 첫 줄}
 ```
 
-### 3. 완료 메시지
+### 4. 완료 메시지
 
 ```
 ✅ 로드 완료
