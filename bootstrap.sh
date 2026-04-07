@@ -6,7 +6,7 @@ set -e
 
 # ── 환경 감지 ──────────────────────────────────────────────
 if [ -f "$HOME/.claude/CLAUDE.md" ]; then
-  echo "⚠️  Mac Mini 환경 감지 — bootstrap을 실행하지 않습니다."
+  echo "⚠️  Mac Dev 환경 감지 — bootstrap을 실행하지 않습니다."
   echo "   Mac 환경에서는 기존 구조를 사용하세요."
   exit 0
 fi

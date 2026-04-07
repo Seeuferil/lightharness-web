@@ -5,11 +5,11 @@
 세션 시작 시 가장 먼저 확인합니다.
 
 ```
-~/.claude/CLAUDE.md 존재 → Mac Mini 환경 → 이 파일의 모든 규칙 무시하고 종료
+~/.claude/CLAUDE.md 존재 → Mac Dev 환경 → 이 파일의 모든 규칙 무시하고 종료
 ~/.claude/CLAUDE.md 없음 → Web Claude Code 환경 → 아래 규칙 적용
 ```
 
-Mac Mini 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규칙은 `~/.claude/CLAUDE.md`에서 관리됩니다.
+Mac Dev 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규칙은 `~/.claude/CLAUDE.md`에서 관리됩니다.
 
 ---
 

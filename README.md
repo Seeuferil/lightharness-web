@@ -2,7 +2,7 @@
 
 Web Claude Code (claude.ai/code) 전용 경량 에이전트 오케스트레이터.
 
-Mac Mini CLI 버전과 완전히 독립된 구조입니다.
+Mac Dev CLI 버전과 완전히 독립된 구조입니다.
 
 ---
 
