@@ -20,7 +20,7 @@ Mac Mini CLI 버전과 완전히 독립된 구조입니다.
 
 ```bash
 # 프로젝트 repo 루트에서
-git submodule add https://github.com/mpm4/lightharness-web .claude/lhw
+git submodule add https://github.com/Seeuferil/lightharness-web .claude/lhw
 
 # 프로젝트 CLAUDE.md 생성
 mkdir -p .claude
