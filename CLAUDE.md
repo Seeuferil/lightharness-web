@@ -13,15 +13,32 @@ Mac Mini 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규
 
 ---
 
-## 스킬 로드
+## 세션 시작 배너
 
-세션 시작 시 아래 스킬을 자동으로 읽어 슬래시 커맨드로 등록합니다.
+Web Claude Code 환경 감지 시 아래 배너를 출력합니다.
+
+```
+LightHarness Web 로드됨
+─────────────────────────────
+사용 가능한 커맨드 (타이핑으로 실행):
+  /harness [목표]   — 에이전트 팀 Blueprint 설계
+  /harness-run      — Blueprint 실행 (큐 자동 감지)
+  /rsm              — 세션 재개 (이전 Task 불러오기)
+  /rsm log          — 세션 종료 (다음 할 일 저장)
+
+3-Tier: Sonnet(조율) / Gemini(대형분석) / Haiku(반복작업)
+─────────────────────────────
+```
+
+## 스킬 목록
 
 | 커맨드 | 파일 | 역할 |
 |---|---|---|
 | `/harness` | `.claude/lhw/skills/harness.md` | Blueprint 설계 |
 | `/harness-run` | `.claude/lhw/skills/harness-run.md` | Blueprint 실행 |
 | `/rsm` | `.claude/lhw/skills/rsm.md` | 세션 핸드오프 |
+
+커맨드는 `/` 자동완성 메뉴 대신 직접 타이핑하거나 자연어로 요청합니다.
 
 ---
 
