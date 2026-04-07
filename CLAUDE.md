@@ -1,26 +1,26 @@
+@CLAUDE-global-web.md
+
+---
+
 # LightHarness Web
 
 ## 환경 감지 — 최우선 실행
-
-세션 시작 시 가장 먼저 확인합니다.
 
 ```
 ~/.claude/CLAUDE.md 존재 → Mac Dev 환경 → 이 파일의 모든 규칙 무시하고 종료
 ~/.claude/CLAUDE.md 없음 → Web Claude Code 환경 → 아래 규칙 적용
 ```
 
-Mac Dev 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규칙은 `~/.claude/CLAUDE.md`에서 관리됩니다.
-
 ---
 
 ## 스킬 로드
 
-세션 시작 시 아래 스킬을 자동으로 읽어 슬래시 커맨드로 등록합니다.
+세션 시작 시 환경 감지 후 스킬을 자동으로 읽어 슬래시 커맨드로 등록합니다.
 
-스킬 파일 경로는 환경에 따라 자동 판별합니다:
+스킬 파일 경로 자동 판별:
 ```
-skills/ 존재                → lightharness-web 레포 직접 작업 (skills/ 사용)
-.claude/lhw/skills/ 존재    → submodule로 연결된 프로젝트 (.claude/lhw/skills/ 사용)
+skills/ 존재             → lightharness-web 레포 직접 작업 (skills/ 사용)
+.claude/lhw/skills/ 존재 → submodule로 연결된 프로젝트 (.claude/lhw/skills/ 사용)
 ```
 
 | 커맨드 | submodule 경로 | 직접 작업 경로 | 역할 |
@@ -29,80 +29,3 @@ skills/ 존재                → lightharness-web 레포 직접 작업 (skills/
 | `/wharness-run` | `.claude/lhw/skills/wharness-run.md` | `skills/wharness-run.md` | Blueprint 실행 |
 | `/wharness-check` | `.claude/lhw/skills/wharness-check.md` | `skills/wharness-check.md` | 코드 정적 버그 감사 |
 | `/wrsm` | `.claude/lhw/skills/wrsm.md` | `skills/wrsm.md` | 세션 핸드오프 |
-
----
-
-## 3-Tier 라우팅
-
-`/wharness`, `/wharness-run`, `/wharness-check` 실행 시에만 적용합니다.
-일반 대화·코딩은 Tier 1(Sonnet)이 직접 처리합니다.
-
-| Tier | 모델 | 역할 | 호출 방식 |
-|---|---|---|---|
-| 1 | Claude Sonnet | 조율·판단·코드 작성 | 현재 세션 (직접) |
-| 2 | Gemini Flash | 500줄+ 파일 분석·Lint | `Agent(subagent_type="gemini-analyzer")` |
-| 3 | Claude Haiku | 반복·요약·검색·커밋 메시지 | `Agent(model="haiku")` |
-
-### 에스컬레이션 순서
-
-```
-Tier 3 → Tier 2 → Tier 1
-```
-
-Tier 3 실패 시 Tier 2로, Tier 2 실패 시 Tier 1이 직접 처리합니다.
-Tier 3 실패 시 Tier 1 직접 이동은 금지합니다.
-
-### Tier 3 적합 작업 (Haiku)
-
-- 코드 검색·요약
-- 단순 리팩터링
-- 커밋 메시지 생성
-- Blueprint Lint 전처리
-- 반복 템플릿 생성
-
-### Tier 2 적합 작업 (Gemini)
-
-- 500줄 이상 파일 전체 분석
-- 대형 코드베이스 의존성 파악
-- Blueprint YAML Lint (5개 규칙 검사)
-
----
-
-## Blueprint 저장 위치
-
-```
-.claude/lhw/blueprints/     ← lightharness-web submodule 내 (재사용 템플릿)
-.claude/blueprints/         ← 프로젝트 전용 Blueprint (프로젝트 repo에 저장)
-```
-
-`/wharness`로 설계한 Blueprint는 프로젝트 전용이면 `.claude/blueprints/`에,
-여러 프로젝트에서 재사용할 템플릿이면 `.claude/lhw/blueprints/`에 저장합니다.
-
----
-
-## 실행 결과 저장
-
-파일시스템 직접 저장 불가 → TaskOutput 사용
-
-```
-각 단계 완료 → TaskUpdate(status="completed", output="결과 요약")
-전체 완료 → TaskCreate로 다음 할 일 등록
-```
-
----
-
-## 커밋 메시지 규칙
-
-- Tier 3 (Haiku)로 생성 요청
-- 형식: `type: short summary` (최대 72자, 영어)
-- type: `feat` / `fix` / `chore` / `refactor` / `docs`
-- 마지막 줄: `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`
-
----
-
-## 토큰 절약
-
-1. 500줄 이상 파일 → Tier 2 (Gemini) 오프로드
-2. 반복 작업 → Tier 3 (Haiku) 위임
-3. 이전 단계 결과 전달 시 요약(3~5줄) + 핵심 스니펫(10줄 이내)만 사용
-4. 대용량 분석 결과 → TaskOutput에 저장 후 경로만 참조

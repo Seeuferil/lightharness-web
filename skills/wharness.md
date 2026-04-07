@@ -13,11 +13,10 @@
 2. 에이전트 수는 최대 3개로 제한합니다.
 3. 각 에이전트에 `Execution_Target`을 지정합니다.
    - `tier1`: Claude Sonnet — 조율·판단·코드 작성
-   - `tier2`: Gemini Flash — 대형 분석·Lint
-   - `tier3`: Claude Haiku — 반복·요약·검색
+   - `tier2`: Claude Haiku — 반복·요약·검색·커밋 메시지
 4. `tier1` 단계는 전체의 1/3 이하를 목표로 합니다.
-5. `tier3` 우선 작업: 코드 검색·요약·단순 리팩터링·템플릿 생성·커밋 메시지
-6. **tier3 에이전트의 System_Prompt는 반드시 영어로 작성합니다.**
+5. `tier2` 우선 작업: 코드 검색·요약·단순 리팩터링·템플릿 생성·커밋 메시지
+6. **tier2 에이전트의 System_Prompt는 반드시 영어로 작성합니다.**
 
 ---
 
@@ -39,7 +38,7 @@ Queue:
 Agents:
   - Id: "<id>"
     Role: "<역할 설명>"
-    Execution_Target: "tier1" | "tier2" | "tier3"
+    Execution_Target: "tier1" | "tier2"
     System_Prompt: |
       ...
     input_schema: "<입력 타입 설명>"
@@ -75,19 +74,22 @@ YAML 출력 후 반드시 아래 순서대로 진행합니다.
 
 ### 2. Blueprint Lint (Tier 2 자동 실행)
 
-`gemini-analyzer` subagent로 5개 규칙 검사:
+Haiku subagent로 5개 규칙 검사:
 
-```
-Lint this YAML for 5 rules. Output exactly 5 lines: PASS or FAIL: reason.
+```python
+Agent(
+  model="haiku",
+  prompt="""Lint this YAML for 5 rules. Output exactly 5 lines: PASS or FAIL: reason.
 
 RULE-1 WORKFLOW_LINKS: Every To value must match an Agent Id or be END.
-RULE-2 TIER3_PROMPT_LANG: For Execution_Target=tier3 agents, System_Prompt must have no Korean characters (unicode AC00-D7A3).
+RULE-2 TIER2_PROMPT_LANG: For Execution_Target=tier2 agents, System_Prompt must have no Korean characters (unicode AC00-D7A3).
 RULE-3 TIER1_RATIO: tier1_count / total_agents > 0.5 = FAIL.
 RULE-4 ERROR_POLICY: Every Workflow step has non-empty Error_Policy.
 RULE-5 QUEUE_META: Queue.affected_files is a non-empty list. dependencies must be a list (can be empty).
 
 YAML:
-{저장된 YAML 전체}
+{저장된 YAML 전체}"""
+)
 ```
 
 - 5개 모두 PASS → 완료 출력
@@ -123,6 +125,6 @@ Blueprint: .claude/blueprints/{Template_Name}.yaml
 | Agents 수 | 1 ≤ n ≤ 3 |
 | 필수 필드 | Id, Role, Execution_Target, System_Prompt 모두 존재 |
 | Pattern 값 | `Plan-Do-Review` 또는 `Single-Agent+Helper` |
-| Execution_Target 값 | `tier1`, `tier2`, `tier3` 중 하나 |
+| Execution_Target 값 | `tier1`, `tier2` 중 하나 |
 | Workflow Error_Policy | 모든 Step에 포함 |
 | tier1 비율 | 전체 Agents 중 1/3 이하 (가능한 경우) |

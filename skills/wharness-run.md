@@ -25,7 +25,7 @@ Blueprint YAML에 정의된 워크플로우를 단계별로 실행합니다.
 2. YAML 유효성 검증 (불만족 시 즉시 중단):
    - 필수 필드: `Template_Name`, `Pattern`, `Agents`, `Workflow`, `Defaults`
    - Agents 각 항목: `Id`, `Role`, `Execution_Target`, `System_Prompt`
-   - Execution_Target 값: `tier1`, `tier2`, `tier3` 중 하나
+   - Execution_Target 값: `tier1`, `tier2` 중 하나
 3. 요약 출력 후 즉시 실행:
    ```
    ▶ 실행: {Template_Name}
@@ -75,9 +75,8 @@ You are processing {n} independent jobs in a single pass. Complete ALL jobs befo
 ▶ 큐 머지 실행: {n}개 Blueprint → {m}개 배치
 
 배치 1: [{Blueprint_A}, {Blueprint_B}]
-  tier3: scout_A → scout_B (순차)
+  tier2: scout_A → scout_B (순차, Haiku)
   tier1: implementer_A + implementer_B → 머지 1회
-  tier2: reviewer (Gemini)
   tier1 절감: {x}회 → 1회
 
 배치 2: [{Blueprint_C}] (독립)
@@ -92,16 +91,7 @@ You are processing {n} independent jobs in a single pass. Complete ALL jobs befo
 Claude가 직접 해당 Agent의 System_Prompt를 역할로 삼아 작업을 수행합니다.
 결과는 TaskUpdate output 필드에 저장합니다.
 
-### tier2 (Gemini Flash)
-
-```python
-Agent(
-  subagent_type="gemini-analyzer",
-  prompt="[English] {System_Prompt 핵심}\n\nContext:\n{이전 단계 결과 요약 + 핵심 스니펫}"
-)
-```
-
-### tier3 (Claude Haiku)
+### tier2 (Claude Haiku)
 
 ```python
 Agent(
@@ -111,7 +101,7 @@ Agent(
 ```
 
 **공통 원칙:**
-- tier2, tier3 PROMPT는 반드시 영어
+- tier2 PROMPT는 반드시 영어
 - 파일 전체 inline 전달 금지 — 요약 + 핵심 스니펫(10줄 이내)만
 - 이전 단계 결과는 요약(3~5줄) + 핵심 스니펫만 전달
 
@@ -135,8 +125,7 @@ Agent(
 
 | 상황 | 처리 |
 |---|---|
-| tier3 실패 | 실패 원인 → 다음 tier1 단계에 전달 |
-| tier2 실패 | tier1이 직접 처리 (에스컬레이션) |
+| tier2 실패 | 실패 원인 → tier1이 직접 처리 (에스컬레이션) |
 | tier1 실패 | 사용자에게 보고 후 재시도 여부 확인 |
 | YAML 검증 실패 | 즉시 중단, 오류 위치 출력 |
 | 머지 배치 일부 실패 | 실패 Job만 단독 재실행, 나머지 완료 처리 |

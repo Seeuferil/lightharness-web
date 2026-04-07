@@ -9,10 +9,10 @@
 
 | 단계 | Tier | 역할 |
 |---|---|---|
-| scout | tier3 (Haiku) | 프로젝트 타입 + 핵심 파일 목록 수집 |
-| auditor | tier3 (Haiku) | 8개 카테고리 버그 분석 |
+| scout | tier2 (Haiku) | 프로젝트 타입 + 핵심 파일 목록 수집 |
+| auditor | tier2 (Haiku) | 8개 카테고리 버그 분석 |
 | patcher | tier1 (Sonnet) | CRITICAL/WARNING 수정 |
-| verifier | tier3 (Haiku) | 4가지 회귀 검증 |
+| verifier | tier2 (Haiku) | 4가지 회귀 검증 |
 
 ---
 
@@ -41,7 +41,7 @@
 
 ---
 
-## STEP 1 — scout (tier3)
+## STEP 1 — scout (tier2)
 
 ```python
 Agent(
@@ -70,11 +70,11 @@ scout 결과를 STEP 2로 전달합니다.
 
 ---
 
-## STEP 2 — auditor (tier3)
+## STEP 2 — auditor (tier2)
 
 scout 결과의 `audit_files`를 대상으로 8개 카테고리 순서대로 검사합니다.
 
-500줄 이상 파일은 tier2 (gemini-analyzer)로 오프로드합니다.
+500줄 이상 파일은 파일 요약 + 핵심 스니펫(10줄 이내)만 전달합니다.
 
 ```python
 Agent(
@@ -127,7 +127,7 @@ INFO 항목은 보고서에 기록하되 수정하지 않습니다.
 
 ---
 
-## STEP 4 — verifier (tier3)
+## STEP 4 — verifier (tier2)
 
 patcher가 수정한 파일을 대상으로 4가지 회귀 검증합니다.
 
@@ -180,8 +180,8 @@ DEFERRED 항목이 있으면 /wharness 로 Blueprint를 설계하세요.
 
 | 항목 | 조건 |
 |---|---|
-| 파일당 라인 수 | 500줄 이상 → tier2 오프로드 |
+| 파일당 라인 수 | 500줄 이상 → 요약 + 스니펫만 tier2에 전달 |
 | patcher 수정 범위 | CRITICAL/WARNING만, INFO 수정 금지 |
 | 컨텍스트 전달 | 이전 단계 요약(3~5줄) + 핵심 스니펫(10줄 이내)만 |
-| tier2/tier3 prompt | 영어만 |
+| tier2 prompt | 영어만 |
 | 재실행 | 단계별 최대 1회 |
