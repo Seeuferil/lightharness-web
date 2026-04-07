@@ -1,0 +1,80 @@
+# LightHarness Web — Blueprint 예시 템플릿
+# 이 파일을 복사해서 새 Blueprint를 작성하세요.
+
+Template_Name: "example_task"
+Pattern: "Plan-Do-Review"   # Plan-Do-Review | Single-Agent+Helper
+Target_Repo: "my-project"   # 작업 대상 프로젝트 repo 이름
+
+Queue:
+  affected_files:
+    - "src/example.ts"
+  merge_group: ""            # 같은 값끼리 같은 배치로 묶음 (선택)
+  dependencies: []           # 선행 완료가 필요한 Template_Name 목록
+
+Agents:
+  - Id: "scout"
+    Role: "코드 분석 및 작업 범위 파악"
+    Execution_Target: "tier3"   # tier1 | tier2 | tier3
+    System_Prompt: |
+      You are a code scout. Analyze the target files and produce a concise spec JSON.
+      Focus on: current structure, what needs to change, potential side effects.
+      Output format: JSON with keys: files, changes, risks
+    input_schema: "file paths to analyze"
+    output_schema: "JSON: {files: string[], changes: object[], risks: string[]}"
+
+  - Id: "implementer"
+    Role: "spec 기반 구현"
+    Execution_Target: "tier1"
+    System_Prompt: |
+      당신은 구현 담당자입니다.
+      scout가 생성한 spec JSON을 기반으로 코드를 작성합니다.
+      변경 범위를 spec에 명시된 파일로 제한합니다.
+    input_schema: "JSON spec from scout"
+    output_schema: "modified code files"
+
+  - Id: "reviewer"
+    Role: "구현 결과 검증"
+    Execution_Target: "tier2"
+    System_Prompt: |
+      Review the implemented changes against the original spec.
+      Check: correctness, edge cases, security issues, consistency.
+      Output: PASS or list of issues.
+    input_schema: "original spec + implemented code diff"
+    output_schema: "PASS or issue list"
+
+Workflow:
+  - From: "START"
+    To: "scout"
+    Note: "분석할 파일 경로 전달"
+    Output_Format: "JSON spec"
+    Error_Policy: "실패 시 tier1이 직접 분석"
+    token_budget: 1000
+
+  - From: "scout"
+    To: "implementer"
+    Note: "spec JSON 전달"
+    Output_Format: "수정된 코드"
+    Error_Policy: "실패 시 사용자에게 보고"
+    token_budget: 3000
+
+  - From: "implementer"
+    To: "reviewer"
+    Note: "구현 결과 + 원본 spec 전달"
+    Output_Format: "PASS 또는 이슈 목록"
+    Error_Policy: "FAIL 시 implementer 재실행 1회"
+    token_budget: 1500
+
+  - From: "reviewer"
+    To: "END"
+    Note: "검증 완료"
+    Output_Format: "최종 결과 요약"
+    Error_Policy: "이슈 있으면 사용자에게 보고"
+    token_budget: 500
+
+Defaults:
+  Context_Policy:
+    Max_History_Steps: 5
+    Use_Summary: true
+  Limits:
+    Max_Agents: 3
+    Max_Tier1_Steps_Per_Session: 10
