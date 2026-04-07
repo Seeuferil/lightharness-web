@@ -62,11 +62,9 @@ Web Claude Code에서는 `/wrsm` 사용. (`/rsm` 대신)
 
 ## 실행 결과 저장 (Web 전용)
 
-파일시스템 직접 저장 불가 → TaskOutput 사용:
-
 ```
-각 단계 완료 → TaskUpdate(status="completed", output="결과 요약")
-전체 완료   → TaskCreate로 다음 할 일 등록
+각 단계 완료 → tasks/todo.md 업데이트
+전체 완료   → git commit으로 저장
 ```
 
 ## Blueprint 저장 위치
