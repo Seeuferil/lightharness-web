@@ -15,7 +15,7 @@ Mac Mini 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규
 
 ## 세션 시작 배너
 
-Web Claude Code 환경 감지 시 아래 배너를 출력합니다.
+**Web Claude Code 환경으로 확인되면 첫 응답 시 반드시 아래 배너를 즉시 출력하세요.**
 
 ```
 LightHarness Web 로드됨
@@ -52,6 +52,8 @@ LightHarness Web 로드됨
 | 1 | Claude Sonnet | 조율·판단·코드 작성 | 현재 세션 (직접) |
 | 2 | Gemini Flash | 500줄+ 파일 분석·Lint | `Agent(subagent_type="gemini-analyzer")` |
 | 3 | Claude Haiku | 반복·요약·검색·커밋 메시지 | `Agent(model="haiku")` |
+
+> `Max_Tier1_Steps_Per_Session: 10`은 참고용 가이드라인입니다. 자동 강제되지 않으며 완료 출력 시 사용량을 표시하는 용도로만 사용합니다.
 
 ### 에스컬레이션 순서
 

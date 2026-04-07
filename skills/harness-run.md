@@ -135,8 +135,8 @@ Agent(
 
 | 상황 | 처리 |
 |---|---|
-| tier3 실패 | 실패 원인 → 다음 tier1 단계에 전달 |
-| tier2 실패 | tier1이 직접 처리 (에스컬레이션) |
+| tier3 실패 | tier2로 에스컬레이션 → tier2도 실패 시 tier1이 직접 처리 |
+| tier2 실패 | tier1이 직접 처리 |
 | tier1 실패 | 사용자에게 보고 후 재시도 여부 확인 |
 | YAML 검증 실패 | 즉시 중단, 오류 위치 출력 |
 | 머지 배치 일부 실패 | 실패 Job만 단독 재실행, 나머지 완료 처리 |
@@ -147,9 +147,9 @@ Agent(
 
 ### Task 업데이트
 
-각 Blueprint 실행 완료 시:
+각 Blueprint 실행 완료 시 TodoWrite로 해당 항목을 completed 처리합니다:
 ```
-TaskUpdate(id={task_id}, status="completed")
+TodoWrite(todos=[..., {content: "{Template_Name}", status: "completed", ...}])
 ```
 
 ### 완료 출력
