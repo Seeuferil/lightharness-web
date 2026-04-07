@@ -1,3 +1,28 @@
+# REQUIRED: 세션 첫 응답 전 반드시 실행
+
+STEP 1. 아래 상태 블록을 텍스트로 출력한다 (코드블록 아님):
+
+⚙️ LightHarness 로딩 상태
+
+[하네스 구조]
+  ✅ CLAUDE.md                로드됨
+  ✅ CLAUDE-global.md         로드됨
+  ✅ CLAUDE-global-web.md     로드됨
+  하네스 발동: w* 명령어로만 (wharness / wharness-run / wharness-check / wrsm)
+  스킬 경로: skills/ 또는 .claude/lhw/skills/
+
+[2-Tier LLM 구조]
+  Tier 1 — Claude Sonnet : 현재 세션 (조율·판단·코드)   ✅ 활성
+  Tier 2 — Claude Haiku  : Agent(model="haiku") 위임   ✅ 준비됨
+  에스컬레이션: Tier 2 실패 → Tier 1 직접 처리
+
+[세션]
+  tasks/todo.md 존재하면 "로드됨", 없으면 "없음"
+
+STEP 2. 그 다음 사용자 입력에 응답한다.
+
+---
+
 @CLAUDE-global.md
 
 ---
@@ -6,31 +31,6 @@
 
 > CLAUDE-global.md 기준에서 Web Claude Code 환경에 맞게 아래 항목을 오버라이드합니다.
 > Mac Dev 전용 섹션(Obsidian 볼트, Tool 자동승인, LM Studio, LiveStatus)은 Web에서 적용 안 함.
-
----
-
-## 세션 시작 시 필수 출력
-
-**어떤 입력이 와도 반드시 먼저 출력할 것.**
-
-```
-⚙️ LightHarness 로딩 상태
-
-[하네스 구조]
-  ✅ CLAUDE.md                로드됨
-  ✅ CLAUDE-global.md         로드됨
-  ✅ CLAUDE-global-web.md     로드됨
-  스킬 경로: skills/ 또는 .claude/lhw/skills/
-  하네스 발동: w* 명령어로만 (wharness / wharness-run / wharness-check / wrsm)
-
-[2-Tier LLM 구조]
-  Tier 1 — Claude Sonnet : 현재 세션 (조율·판단·코드)   ✅ 활성
-  Tier 2 — Claude Haiku  : Agent(model="haiku") 위임   ✅ 준비됨
-  에스컬레이션: Tier 2 실패 → Tier 1 직접 처리
-
-[세션]
-  tasks/todo.md 존재 여부 확인 후 표시
-```
 
 ---
 
@@ -54,9 +54,7 @@
 
 ### 에스컬레이션
 
-```
 Tier 2 실패 → Tier 1이 직접 처리
-```
 
 ### Tier 2 적합 작업 (Haiku)
 
@@ -103,19 +101,15 @@ Web Claude Code에서는 `wrsm` 사용. (`/rsm` 대신)
 
 ## 실행 결과 저장 (Web 전용)
 
-```
 각 단계 완료 → tasks/todo.md 업데이트
 전체 완료   → git commit으로 저장
-```
 
 ---
 
 ## Blueprint 저장 위치
 
-```
 .claude/lhw/blueprints/  ← 재사용 템플릿
 .claude/blueprints/      ← 프로젝트 전용
-```
 
 ---
 
