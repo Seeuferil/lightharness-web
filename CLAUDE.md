@@ -13,28 +13,35 @@ Mac Mini 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규
 
 ---
 
-## 스킬 로드
+## 슬래시 커맨드
 
-세션 시작 시 아래 스킬을 자동으로 읽어 슬래시 커맨드로 등록합니다.
+`.claude/commands/`에 하드 등록되어 자동으로 사용 가능합니다.
+Mac Mini의 `/harness`와 충돌하지 않도록 `w` 접두어를 사용합니다.
 
 | 커맨드 | 파일 | 역할 |
 |---|---|---|
-| `/harness` | `.claude/lhw/skills/harness.md` | Blueprint 설계 |
-| `/harness-run` | `.claude/lhw/skills/harness-run.md` | Blueprint 실행 |
-| `/rsm` | `.claude/lhw/skills/rsm.md` | 세션 핸드오프 |
+| `/wharness` | `.claude/commands/wharness.md` | Blueprint 설계 |
+| `/wharness-run` | `.claude/commands/wharness-run.md` | Blueprint 실행 |
+| `/wrsm` | `.claude/commands/wrsm.md` | 세션 핸드오프 (GitHub Issues 기반) |
 
 ---
 
 ## 3-Tier 라우팅
 
-`/harness`, `/harness-run` 실행 시에만 적용합니다.
-일반 대화·코딩은 Tier 1(Sonnet)이 직접 처리합니다.
+`/wharness`, `/wharness-run` 실행 시에만 적용합니다.
+일반 대화·코딩은 Tier 1이 직접 처리합니다.
 
 | Tier | 모델 | 역할 | 호출 방식 |
 |---|---|---|---|
-| 1 | Claude Sonnet | 조율·판단·코드 작성 | 현재 세션 (직접) |
-| 2 | Gemini Flash | 500줄+ 파일 분석·Lint | `Agent(subagent_type="gemini-analyzer")` |
+| 1 | Claude (현재 세션) | 조율·판단·코드 작성 | 직접 처리 |
+| 2 | Gemini Flash | 500줄+ 파일 분석·Lint | Gemini MCP 도구 (`.mcp.json` 필요) |
 | 3 | Claude Haiku | 반복·요약·검색·커밋 메시지 | `Agent(model="haiku")` |
+
+### Tier 2 Fallback
+
+Gemini MCP 서버가 연결되어 있지 않으면:
+- Lint → Tier 3 (Haiku) 대체
+- 대형 파일 분석 → Tier 1 직접 처리
 
 ### 에스컬레이션 순서
 
@@ -68,19 +75,29 @@ Tier 3 실패 시 Tier 1 직접 이동은 금지합니다.
 .claude/blueprints/         ← 프로젝트 전용 Blueprint (프로젝트 repo에 저장)
 ```
 
-`/harness`로 설계한 Blueprint는 프로젝트 전용이면 `.claude/blueprints/`에,
+`/wharness`로 설계한 Blueprint는 프로젝트 전용이면 `.claude/blueprints/`에,
 여러 프로젝트에서 재사용할 템플릿이면 `.claude/lhw/blueprints/`에 저장합니다.
 
 ---
 
-## 실행 결과 저장
+## 세션 핸드오프 — GitHub Issues
 
-파일시스템 직접 저장 불가 → TaskOutput 사용
+TaskList/TaskCreate 대신 **GitHub Issues**를 영구 상태 저장소로 사용합니다.
 
 ```
-각 단계 완료 → TaskUpdate(status="completed", output="결과 요약")
-전체 완료 → TaskCreate로 다음 할 일 등록
+/wrsm         → GitHub Issues 조회 (harness:pending, harness:active)
+/wrsm log     → 완료 Issue close + 다음 할 일 Issue 생성
 ```
+
+### 라벨 체계
+
+| 라벨 | 용도 |
+|---|---|
+| `harness:pending` | 대기 중 태스크 |
+| `harness:active` | 현재 진행 중 |
+| `harness:completed` | 완료 |
+| `blueprint` | Blueprint 설계 태스크 |
+| `session-handoff` | 세션 핸드오프 메모 |
 
 ---
 
@@ -98,4 +115,4 @@ Tier 3 실패 시 Tier 1 직접 이동은 금지합니다.
 1. 500줄 이상 파일 → Tier 2 (Gemini) 오프로드
 2. 반복 작업 → Tier 3 (Haiku) 위임
 3. 이전 단계 결과 전달 시 요약(3~5줄) + 핵심 스니펫(10줄 이내)만 사용
-4. 대용량 분석 결과 → TaskOutput에 저장 후 경로만 참조
+4. 대용량 분석 결과 요약 후 경로만 참조
