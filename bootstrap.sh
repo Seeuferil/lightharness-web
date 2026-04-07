@@ -73,16 +73,16 @@ mkdir -p "$CLAUDE_DIR"
 
 # SessionStart hook: Web 환경에서만 서브모듈 자동 초기화
 # Mac Mini 가드: ~/.claude/CLAUDE.md 존재 시 스킵
-HOOK_CMD='[ ! -f "$HOME/.claude/CLAUDE.md" ] && [ -f .gitmodules ] && git submodule update --init --recursive 2>/dev/null; true'
+# 주의: HEREDOC은 반드시 quoted ('JSONEOF') — JSON 내 \" 보존 + $HOME 리터럴 유지
 
 if [ ! -f "$SETTINGS_JSON" ]; then
   echo "📝 .claude/settings.json 생성 중..."
-  cat > "$SETTINGS_JSON" << JSONEOF
+  cat > "$SETTINGS_JSON" << 'JSONEOF'
 {
   "hooks": {
     "SessionStart": [
       {
-        "command": "$HOOK_CMD"
+        "command": "[ ! -f \"$HOME/.claude/CLAUDE.md\" ] && [ -f .gitmodules ] && git submodule update --init --recursive 2>/dev/null; true"
       }
     ]
   }
@@ -95,6 +95,7 @@ else
   else
     echo "📝 settings.json에 SessionStart hook 추가 중..."
     # jq가 있으면 안전하게 머지, 없으면 경고
+    HOOK_CMD='[ ! -f "$HOME/.claude/CLAUDE.md" ] && [ -f .gitmodules ] && git submodule update --init --recursive 2>/dev/null; true'
     if command -v jq > /dev/null 2>&1; then
       TMP=$(mktemp)
       jq --arg cmd "$HOOK_CMD" '
@@ -104,9 +105,9 @@ else
     else
       echo "⚠️  jq가 없어 자동 머지 불가 — 아래 내용을 .claude/settings.json에 수동 추가하세요:"
       echo ""
-      echo "  \"hooks\": {"
-      echo "    \"SessionStart\": [{\"command\": \"$HOOK_CMD\"}]"
-      echo "  }"
+      echo '  "hooks": {'
+      echo '    "SessionStart": [{"command": "[ ! -f \"$HOME/.claude/CLAUDE.md\" ] && [ -f .gitmodules ] && git submodule update --init --recursive 2>/dev/null; true"}]'
+      echo '  }'
     fi
   fi
 fi
