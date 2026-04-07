@@ -1,4 +1,4 @@
-# /harness-check — 코드 정적 버그 감사 스킬
+# /wharness-check — 코드 정적 버그 감사 스킬
 
 작업 중인 코드를 4단계로 정적 분석합니다.
 변경된 파일 또는 지정 경로를 대상으로 8개 버그 카테고리를 검사하고 CRITICAL/WARNING을 수정합니다.
@@ -171,7 +171,7 @@ INFO      {n}개 (미수정, 참고용)
 ─────────────────────────────
 회귀 검증: CHECK-1 {결과} / CHECK-2 {결과} / CHECK-3 {결과} / CHECK-4 {결과}
 
-DEFERRED 항목이 있으면 /harness 로 Blueprint를 설계하세요.
+DEFERRED 항목이 있으면 /wharness 로 Blueprint를 설계하세요.
 ```
 
 ---

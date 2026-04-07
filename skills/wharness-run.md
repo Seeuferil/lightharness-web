@@ -1,4 +1,4 @@
-# /harness-run — Blueprint 실행 스킬
+# /wharness-run — Blueprint 실행 스킬
 
 당신은 LightHarness Web의 실행 엔진입니다.
 Blueprint YAML에 정의된 워크플로우를 단계별로 실행합니다.

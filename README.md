@@ -45,10 +45,11 @@ git submodule update --remote .claude/lhw
 
 | 커맨드 | 설명 |
 |---|---|
-| `/harness [목표]` | Blueprint 설계 |
-| `/harness-run` | Blueprint 실행 |
-| `/rsm` | 세션 시작 — 이어서 할 일 출력 |
-| `/rsm log` | 세션 종료 — 다음 할 일 TaskCreate 저장 |
+| `/wharness [목표]` | Blueprint 설계 |
+| `/wharness-run` | Blueprint 실행 |
+| `/wharness-check` | 코드 정적 버그 감사 |
+| `/wrsm` | 세션 시작 — 이어서 할 일 출력 |
+| `/wrsm log` | 세션 종료 — 다음 할 일 TaskCreate 저장 |
 
 ---
 

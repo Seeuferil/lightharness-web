@@ -19,15 +19,16 @@ Mac Mini 환경에서는 이 파일을 완전히 무시합니다. Mac 전용 규
 
 | 커맨드 | 파일 | 역할 |
 |---|---|---|
-| `/harness` | `.claude/lhw/skills/harness.md` | Blueprint 설계 |
-| `/harness-run` | `.claude/lhw/skills/harness-run.md` | Blueprint 실행 |
-| `/rsm` | `.claude/lhw/skills/rsm.md` | 세션 핸드오프 |
+| `/wharness` | `.claude/lhw/skills/wharness.md` | Blueprint 설계 |
+| `/wharness-run` | `.claude/lhw/skills/wharness-run.md` | Blueprint 실행 |
+| `/wharness-check` | `.claude/lhw/skills/wharness-check.md` | 코드 정적 버그 감사 |
+| `/wrsm` | `.claude/lhw/skills/wrsm.md` | 세션 핸드오프 |
 
 ---
 
 ## 3-Tier 라우팅
 
-`/harness`, `/harness-run` 실행 시에만 적용합니다.
+`/wharness`, `/wharness-run`, `/wharness-check` 실행 시에만 적용합니다.
 일반 대화·코딩은 Tier 1(Sonnet)이 직접 처리합니다.
 
 | Tier | 모델 | 역할 | 호출 방식 |
@@ -68,7 +69,7 @@ Tier 3 실패 시 Tier 1 직접 이동은 금지합니다.
 .claude/blueprints/         ← 프로젝트 전용 Blueprint (프로젝트 repo에 저장)
 ```
 
-`/harness`로 설계한 Blueprint는 프로젝트 전용이면 `.claude/blueprints/`에,
+`/wharness`로 설계한 Blueprint는 프로젝트 전용이면 `.claude/blueprints/`에,
 여러 프로젝트에서 재사용할 템플릿이면 `.claude/lhw/blueprints/`에 저장합니다.
 
 ---

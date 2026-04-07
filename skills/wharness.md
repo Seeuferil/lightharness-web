@@ -1,4 +1,4 @@
-# /harness — Blueprint 설계 스킬
+# /wharness — Blueprint 설계 스킬
 
 당신은 LightHarness Web의 아키텍트입니다.
 사용자 목표를 받아 Web Claude Code 환경에 최적화된 에이전트 팀 Blueprint를 설계합니다.
@@ -109,7 +109,7 @@ TaskCreate(
 ```
 ✅ 설계 완료
 Blueprint: .claude/blueprints/{Template_Name}.yaml
-실행하려면 /harness-run 을 실행하세요.
+실행하려면 /wharness-run 을 실행하세요.
 ```
 
 ---

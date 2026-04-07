@@ -1,4 +1,4 @@
-# /rsm — 세션 핸드오프 스킬
+# /wrsm — 세션 핸드오프 스킬
 
 TaskList를 유일한 상태 저장소로 사용합니다.
 파일 저장 없음. repo commit 없음.
@@ -9,12 +9,12 @@ TaskList를 유일한 상태 저장소로 사용합니다.
 
 | 호출 | 모드 |
 |---|---|
-| `/rsm` (인자 없음) | LOAD 모드 — 세션 시작 |
-| `/rsm log` | SAVE 모드 — 세션 종료 |
+| `/wrsm` (인자 없음) | LOAD 모드 — 세션 시작 |
+| `/wrsm log` | SAVE 모드 — 세션 종료 |
 
 ---
 
-## LOAD 모드 (`/rsm`)
+## LOAD 모드 (`/wrsm`)
 
 ### 1. TaskList 조회
 
@@ -45,18 +45,18 @@ in_progress 항목 → "진행 중" 으로 출력 (이전 세션에서 미완료
 
 ```
 ✅ 로드 완료 — pending {n}개 / in_progress {m}개
-세션 종료 시 /rsm log 로 저장하세요.
+세션 종료 시 /wrsm log 로 저장하세요.
 ```
 
 TaskList가 비어있으면:
 ```
 📋 등록된 Task 없음.
-새 작업을 시작하거나 /harness 로 Blueprint를 설계하세요.
+새 작업을 시작하거나 /wharness 로 Blueprint를 설계하세요.
 ```
 
 ---
 
-## SAVE 모드 (`/rsm log`)
+## SAVE 모드 (`/wrsm log`)
 
 ### 1. 현재 세션 정리
 
@@ -93,4 +93,4 @@ TaskCreate(
 
 - Task는 세션 간 유지됩니다.
 - 오래된 Task는 주기적으로 정리하세요 (`TaskUpdate(status="completed")` 또는 불필요하면 삭제).
-- harness Blueprint Task는 subject를 `harness: {Template_Name}` 형식으로 유지해야 `/harness-run`이 자동 감지합니다.
+- wharness Blueprint Task는 subject를 `wharness: {Template_Name}` 형식으로 유지해야 `/wharness-run`이 자동 감지합니다.
